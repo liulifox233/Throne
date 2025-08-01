@@ -15,8 +15,8 @@ namespace Configs_network {
             if (Configs::dataStore->started_id < 0) {
                 return HTTPResponse{QObject::tr("Request with proxy but no profile started.")};
             }
-            session.SetProxies({{"http", "127.0.0.1:" + QString(Int2String(Configs::dataStore->inbound_socks_port)).toStdString()},
-                                {"https", "127.0.0.1:" + QString(Int2String(Configs::dataStore->inbound_socks_port)).toStdString()}});
+            session.SetProxies({{"http", "127.0.0.1:" + std::to_string(Configs::dataStore->inbound_socks_port)},
+                                {"https", "127.0.0.1:" + std::to_string(Configs::dataStore->inbound_socks_port)}});
         }
         if (Configs::dataStore->sub_insecure) {
             session.SetVerifySsl(cpr::VerifySsl{false});
@@ -31,7 +31,7 @@ namespace Configs_network {
             headerPairs.append(std::pair<QByteArray, QByteArray>(QByteArray(item.first.c_str()), QByteArray(item.second.c_str())));
         }
         auto err = resp.error.message.empty() ? (resp.status_code == 200 ? "" : resp.status_line) : resp.error.message;
-        auto result = HTTPResponse{ err.c_str(),
+        auto result = HTTPResponse{ QString::fromStdString(err),
                                     resp.text.c_str(), headerPairs};
         return result;
     }
@@ -56,8 +56,8 @@ namespace Configs_network {
                 return true;
             }));
         if (Configs::dataStore->spmode_system_proxy) {
-            session.SetProxies({{"http", "127.0.0.1:" + QString(Int2String(Configs::dataStore->inbound_socks_port)).toStdString()},
-                                {"https", "127.0.0.1:" + QString(Int2String(Configs::dataStore->inbound_socks_port)).toStdString()}});
+            session.SetProxies({{"http", "127.0.0.1:" + std::to_string(Configs::dataStore->inbound_socks_port)},
+                                {"https", "127.0.0.1:" + std::to_string(Configs::dataStore->inbound_socks_port)}});
         }
         auto filePath = Configs::GetBasePath()+ "/" + fileName;
         auto tempFilePath = QString(filePath) + ".part";
